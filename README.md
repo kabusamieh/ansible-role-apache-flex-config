@@ -11,6 +11,9 @@ This role exists to write /etc/httpd/conf.d configuration files. The "parameter"
 more flexible approach to maintaining configurability without creating individual variables for each of apache and its
 mods' many many options. This also allows configurability for custom mods.
 
+Just about every aspect of the templating variable is configurable. While it has only been tested on Red Hat systems, the
+configurability should allow for utilization on any Linux OS.
+
 If you have any suggestions for subsections to add, please create a PR or otherwise make them known.
 
 The examples host vars in example_vars.yml result in the following .conf file(s):
