@@ -1,0 +1,66 @@
+apache_config_server_name: example.com
+apache_config_custom_enable: true
+apache_config_custom:
+  - template_file: custom.conf.j2
+    deployment_location: /etc/httpd/conf.d/ssl.conf
+    backup: true
+    config:
+      mods:
+        - name: ssl_module
+          location: modules/mod_ssl.so
+      listens:
+        - 443
+        - https
+      vhosts:
+        - name: "*:443"
+          server_name: "{{ apache_config_server_name }}"
+          parameters:
+            - name: SSLEngine
+              value: "on"
+            - name: SSLCertificateFile
+              value: "/etc/pki/server.cert"
+            - name: SSLCertificateKeyFile
+              value: "/etc/pki/server.key"
+            - name: SSLVerifyClient
+              value: optional
+            - name: SSLVerifyDepth
+              value: 2
+            - name: SSLOptions
+              value: "+FakeBasicAuth +StrictRequire"
+          locations:
+            - name: '"/"'
+              parameters:
+                - name: "AuthBasicProvider"
+                  value: "ldap"
+                - name: AuthType
+                  value: Basic
+                - name: AuthName
+                  value: '"Company Stuff"'
+                - name: AuthLDAPURL
+                  value: '"ldap://company.local:389/DC=comp,DC=local?sAMAccountName?sub?(objectClass=*)" NONE'
+                - name: AuthLDAPBindDN
+                  value: '"comp\linuxLDAP"'
+                - name: AuthLDAPBindPassword
+                  value: "ex26498"
+                - name: Require
+                  value: "valid-user"
+                - name: Require
+                  value: "group compEx"
+              requireall:
+                - "ssl-verify-client"
+                - 'expr %{SSL_CLIENT_I_DN_O} == "Company, Inc."'
+                - 'expr %{SSL_CLIENT_I_DN_OU} == "Client CertAuth"'
+  - template_file: custom.conf.j2
+    deployment_location: /etc/httpd/conf.d/repos.conf
+    backup: true
+    config:
+      aliases:
+        - short: "/test"
+          full: "/var/www/test"
+      directories:
+        - name: '"/var/www/test"'
+          parameters:
+            - name: Options
+              value: "+Indexes"
+            - name: IndexOptions
+              value: "NameWidth=*,DescriptionWidth=*"
