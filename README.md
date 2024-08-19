@@ -17,7 +17,7 @@ configurability should allow for utilization on any Linux OS.
 If you have any suggestions for subsections to add, please create a PR or otherwise make them known.
 
 The examples host vars in example_vars.yml result in the following .conf file(s):
-```
+```xml
 #
 # Ansible managed
 #
@@ -53,7 +53,7 @@ Listen  443 https
 </VirtualHost>
 ```
 and
-```
+```xml
 #
 # Ansible managed
 #
@@ -66,4 +66,14 @@ Alias /test /var/www/test
     Options +Indexes
     IndexOptions NameWidth=*,DescriptionWidth=*
 </Directory>
+```
+
+***
+
+## Example Playbook
+
+```yaml
+- hosts: webservers
+  roles:
+    - kabusamieh.apache_flex_config
 ```
